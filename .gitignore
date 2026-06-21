@@ -1,0 +1,4 @@
+node_modules/
+mobile-store-backend/node_modules/
+
+.env
