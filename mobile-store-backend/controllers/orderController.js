@@ -7,13 +7,18 @@ const Order = require("../models/Order");
 
 
 
-const razorpay = new Razorpay({
+let razorpay = null;
 
-    key_id: process.env.RAZORPAY_KEY_ID,
+const razorpayKeyId = process.env.RAZORPAY_KEY_ID;
+const razorpayKeySecret = process.env.RAZORPAY_KEY_SECRET;
 
-    key_secret: process.env.RAZORPAY_KEY_SECRET
+if (razorpayKeyId && razorpayKeySecret) {
+  razorpay = new Razorpay({
+    key_id: razorpayKeyId,
+    key_secret: razorpayKeySecret,
+  });
+}
 
-});
 
 
 
@@ -86,15 +91,19 @@ exports.createOrder = async (req, res) => {
 
 
 
+        if (!razorpay) {
+            return res.status(500).json({
+                success: false,
+                message: "Razorpay is not configured. Set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in backend .env.",
+            });
+        }
+
         const razorpayOrder = await razorpay.orders.create({
-
             amount: total * 100,
-
             currency: "INR",
-
-            receipt: order._id.toString()
-
+            receipt: order._id.toString(),
         });
+
 
 
 
