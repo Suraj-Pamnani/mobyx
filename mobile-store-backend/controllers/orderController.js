@@ -4,7 +4,7 @@ const Razorpay = require("razorpay");
 const crypto = require("crypto");
 
 const Order = require("../models/Order");
-
+const sendEmail = require("../utils/sendEmail");
 
 
 let razorpay = null;
@@ -28,7 +28,14 @@ exports.createOrder = async (req, res) => {
 
 
     try {
+        if (!req.body.address) {
 
+            return res.status(400).json({
+                success: false,
+                message: "Shipping address required"
+            });
+
+        }
 
         const cart = await Cart.findOne({
             user: req.user.id
@@ -83,7 +90,9 @@ exports.createOrder = async (req, res) => {
 
             totalAmount: total,
 
-            shippingAddress: req.body.address
+            shippingAddress: req.body.address || {}
+
+
 
         });
 
@@ -216,8 +225,54 @@ exports.verifyPayment = async (req, res) => {
 
         await order.save();
 
+        await sendEmail({
 
-        
+            email: req.user.email,
+
+            subject: "Payment Successful - Mobile Store",
+
+            message: `
+
+           <h2>Payment Successful 🎉</h2>
+
+          <p>Your payment has been received.</p>
+
+          <p>
+          Order ID:
+          <b>${order._id}</b>
+         </p>
+
+         <p>
+         Amount Paid:
+         <b>₹${order.totalAmount}</b>
+         </p>
+
+         <p>
+         Thank you for shopping with us.
+         </p>
+
+`
+
+        });
+
+        await sendEmail({
+
+            email: req.user.email,
+
+            subject: "Order Placed Successfully",
+
+            message: `  
+
+         <h2>Thank you for your order</h2>
+
+         <p>Your order ID is ${order._id}</p>
+
+         <p>Total Amount: ₹${total}</p>
+
+`
+
+        });
+
         await Cart.findOneAndUpdate(
             { user: req.user.id },
             { items: [] }
@@ -245,35 +300,35 @@ exports.verifyPayment = async (req, res) => {
     }
 
 };
-exports.getMyOrders = async(req,res)=>{
+exports.getMyOrders = async (req, res) => {
 
-    try{
+    try {
 
         const orders =
             await Order.find({
-                user:req.user.id
+                user: req.user.id
             })
-            .populate("products.product");
+                .populate("products.product");
 
 
         res.status(200).json({
 
-            success:true,
+            success: true,
 
-            count:orders.length,
+            count: orders.length,
 
             orders
 
         });
 
     }
-    catch(error){
+    catch (error) {
 
         res.status(500).json({
 
-            success:false,
+            success: false,
 
-            message:error.message
+            message: error.message
 
         });
 
@@ -281,47 +336,47 @@ exports.getMyOrders = async(req,res)=>{
 
 };
 exports.getAllOrders = async (req, res) => {
-  try {
-    const orders = await Order.find()
-      .populate("user", "name email")
-      .populate("products.product");
+    try {
+        const orders = await Order.find()
+            .populate("user", "name email")
+            .populate("products.product");
 
-    res.status(200).json({
-      success: true,
-      count: orders.length,
-      orders
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
-  }
+        res.status(200).json({
+            success: true,
+            count: orders.length,
+            orders
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
 };
 exports.updateOrderStatus = async (req, res) => {
-  try {
-    const order = await Order.findById(req.params.id);
+    try {
+        const order = await Order.findById(req.params.id);
 
-    if (!order) {
-      return res.status(404).json({
-        success: false,
-        message: "Order not found"
-      });
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: "Order not found"
+            });
+        }
+
+        order.orderStatus = req.body.status;
+
+        await order.save();
+
+        res.status(200).json({
+            success: true,
+            order
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
     }
-
-    order.orderStatus = req.body.status;
-
-    await order.save();
-
-    res.status(200).json({
-      success: true,
-      order
-    });
-
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
-  }
 };

@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "nodemailer": "^9.0.1",
     "razorpay": "^2.9.6"
   }
 }
