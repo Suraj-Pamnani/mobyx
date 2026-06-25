@@ -2,15 +2,15 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Trash2, Plus, Minus, ShoppingCart } from "lucide-react";
-import { Button } from "../../components/common/Button";
-import { Card, Badge } from "../../components/common/Card";
-import { EmptyState } from "../../components/common/EmptyState";
-import { CartItemSkeleton } from "../../components/common/Skeleton";
-import { useCart } from "../../hooks/useCart";
-import { useAuth } from "../../hooks/useAuth";
-import { cartService } from "../../services";
-import { formatPrice } from "../../utils/format";
-import { ROUTES } from "../../utils/constants";
+import { Button } from "../components/common/Button";
+import { Card, Badge } from "../components/common/Card";
+import { EmptyState } from "../components/common/EmptyState";
+import { CartItemSkeleton } from "../components/common/Skeleton";
+import { useCart } from "../hooks/useCart";
+import { useAuth } from "../hooks/useAuth";
+import { cartService } from "../services";
+import { formatPrice, calculateDiscountedPrice } from "../utils/format";
+import { ROUTES } from "../utils/constants";
 import toast from "react-hot-toast";
 
 export const CartPage = () => {
@@ -23,7 +23,7 @@ export const CartPage = () => {
     if (user) {
       fetchCart();
     }
-  }, [user, fetchCart]);
+  }, [user]);
 
   // Update quantity
   const handleUpdateQuantity = async (productId, newQuantity) => {
@@ -107,7 +107,7 @@ export const CartPage = () => {
 
   // Calculate totals
   const subtotal = items.reduce(
-    (sum, item) => sum + (item.product.price * item.quantity),
+    (sum, item) => sum + (calculateDiscountedPrice(item.product.price, item.product.discount) * item.quantity),
     0
   );
   const tax = subtotal * 0.18; // 18% GST
@@ -219,10 +219,17 @@ export const CartPage = () => {
 
                           <div className="text-right">
                             <p className="text-lg font-bold text-slate-900 dark:text-slate-50">
-                              {formatPrice(item.product.price * item.quantity)}
+                              {formatPrice(calculateDiscountedPrice(item.product.price, item.product.discount) * item.quantity)}
                             </p>
                             <p className="text-xs text-slate-500 dark:text-slate-400">
-                              {formatPrice(item.product.price)} each
+                              {item.product.discount > 0 ? (
+                                <>
+                                  <span className="line-through text-red-400 mr-1">{formatPrice(item.product.price)}</span>
+                                  {formatPrice(calculateDiscountedPrice(item.product.price, item.product.discount))} each
+                                </>
+                              ) : (
+                                <>{formatPrice(item.product.price)} each</>
+                              )}
                             </p>
                           </div>
                         </div>

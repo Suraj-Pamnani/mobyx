@@ -1,10 +1,10 @@
-﻿import { motion } from "framer-motion";
+import { motion } from "framer-motion";
 
 export const Button = ({ children, className = "", variant = "primary", size = "md", loading = false, ...props }) => {
   const baseStyles = "font-medium rounded-lg transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2";
-  
+
   const variants = {
-    primary: "bg-primary-600 text-white hover:bg-primary-700",
+    primary: "bg-slate-900 text-white dark:bg-slate-50 dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-200",
     secondary: "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-50 hover:bg-slate-200 dark:hover:bg-slate-700",
     ghost: "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800",
     danger: "bg-red-600 text-white hover:bg-red-700",

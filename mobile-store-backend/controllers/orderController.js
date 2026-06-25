@@ -13,10 +13,10 @@ const razorpayKeyId = process.env.RAZORPAY_KEY_ID;
 const razorpayKeySecret = process.env.RAZORPAY_KEY_SECRET;
 
 if (razorpayKeyId && razorpayKeySecret) {
-  razorpay = new Razorpay({
-    key_id: razorpayKeyId,
-    key_secret: razorpayKeySecret,
-  });
+    razorpay = new Razorpay({
+        key_id: razorpayKeyId,
+        key_secret: razorpayKeySecret,
+    });
 }
 
 
@@ -49,26 +49,26 @@ exports.createOrder = async (req, res) => {
 
 
 
+        for (let item of cart.items) {
+            if (item.product.stock < item.quantity) {
+                return res.status(400).json({
+                    success: false,
+                    message: `Insufficient stock for ${item.product.modelName}. Available: ${item.product.stock}`
+                });
+            }
+        }
+
         let total = 0;
 
-
         const products = cart.items.map(item => {
-
-
-            total += item.product.price * item.quantity;
-
-
+            const discount = item.product.discount || 0;
+            const discountedPrice = item.product.price - (item.product.price * (discount / 100));
+            total += discountedPrice * item.quantity;
             return {
-
                 product: item.product._id,
-
                 quantity: item.quantity,
-
-                price: item.product.price
-
+                price: discountedPrice
             };
-
-
         });
 
 
@@ -110,13 +110,10 @@ exports.createOrder = async (req, res) => {
 
 
         res.json({
-
             success: true,
-
             orderId: order._id,
-
-            razorpayOrder
-
+            razorpayOrder,
+            keyId: process.env.RAZORPAY_KEY_ID
         });
 
 
@@ -217,7 +214,7 @@ exports.verifyPayment = async (req, res) => {
         await order.save();
 
 
-        
+
         await Cart.findOneAndUpdate(
             { user: req.user.id },
             { items: [] }
@@ -245,35 +242,35 @@ exports.verifyPayment = async (req, res) => {
     }
 
 };
-exports.getMyOrders = async(req,res)=>{
+exports.getMyOrders = async (req, res) => {
 
-    try{
+    try {
 
         const orders =
             await Order.find({
-                user:req.user.id
+                user: req.user.id
             })
-            .populate("products.product");
+                .populate("products.product");
 
 
         res.status(200).json({
 
-            success:true,
+            success: true,
 
-            count:orders.length,
+            count: orders.length,
 
             orders
 
         });
 
     }
-    catch(error){
+    catch (error) {
 
         res.status(500).json({
 
-            success:false,
+            success: false,
 
-            message:error.message
+            message: error.message
 
         });
 
@@ -281,47 +278,47 @@ exports.getMyOrders = async(req,res)=>{
 
 };
 exports.getAllOrders = async (req, res) => {
-  try {
-    const orders = await Order.find()
-      .populate("user", "name email")
-      .populate("products.product");
+    try {
+        const orders = await Order.find()
+            .populate("user", "name email")
+            .populate("products.product");
 
-    res.status(200).json({
-      success: true,
-      count: orders.length,
-      orders
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
-  }
+        res.status(200).json({
+            success: true,
+            count: orders.length,
+            orders
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
 };
 exports.updateOrderStatus = async (req, res) => {
-  try {
-    const order = await Order.findById(req.params.id);
+    try {
+        const order = await Order.findById(req.params.id);
 
-    if (!order) {
-      return res.status(404).json({
-        success: false,
-        message: "Order not found"
-      });
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: "Order not found"
+            });
+        }
+
+        order.orderStatus = req.body.status;
+
+        await order.save();
+
+        res.status(200).json({
+            success: true,
+            order
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
     }
-
-    order.orderStatus = req.body.status;
-
-    await order.save();
-
-    res.status(200).json({
-      success: true,
-      order
-    });
-
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
-  }
 };

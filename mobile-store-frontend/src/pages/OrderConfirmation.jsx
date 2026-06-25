@@ -1,10 +1,10 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { CheckCircle, Home, Package } from "lucide-react";
-import { Button } from "../../components/common/Button";
-import { Card } from "../../components/common/Card";
-import { ROUTES } from "../../utils/constants";
-import { formatPrice, formatDate } from "../../utils/format";
+import { Button } from "../components/common/Button";
+import { Card } from "../components/common/Card";
+import { ROUTES } from "../utils/constants";
+import { formatPrice, formatDate } from "../utils/format";
 
 export const OrderConfirmationPage = () => {
   const { id } = useParams();

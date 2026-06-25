@@ -2,16 +2,16 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, Share2, Heart } from "lucide-react";
-import { Button } from "../../components/common/Button";
-import { Input, Textarea } from "../../components/common/Input";
-import { Card, Badge } from "../../components/common/Card";
-import { Rating, ReviewList } from "../../components/common/Rating";
-import { DetailSkeleton } from "../../components/common/Skeleton";
-import { productService, cartService } from "../../services";
-import { useCart } from "../../hooks/useCart";
-import { useAuth } from "../../hooks/useAuth";
-import { formatPrice } from "../../utils/format";
-import { ROUTES } from "../../utils/constants";
+import { Button } from "../components/common/Button";
+import { Input, Textarea } from "../components/common/Input";
+import { Card, Badge } from "../components/common/Card";
+import { Rating, ReviewList } from "../components/common/Rating";
+import { DetailSkeleton } from "../components/common/Skeleton";
+import { productService, cartService } from "../services";
+import { useCart } from "../hooks/useCart";
+import { useAuth } from "../hooks/useAuth";
+import { formatPrice, calculateDiscountedPrice } from "../utils/format";
+import { ROUTES } from "../utils/constants";
 import toast from "react-hot-toast";
 
 export const ProductDetailPage = () => {
@@ -37,7 +37,7 @@ export const ProductDetailPage = () => {
         setLoading(true);
         setError(null);
         const response = await productService.getProductById(id);
-        setProduct(response);
+        setProduct(response.product);
       } catch (err) {
         console.error("Failed to fetch product:", err);
         setError("Failed to load product details");
@@ -189,8 +189,24 @@ export const ProductDetailPage = () => {
 
             {/* Price & Stock */}
             <div className="p-6 bg-slate-50 dark:bg-slate-800 rounded-lg">
-              <div className="text-4xl font-bold text-slate-900 dark:text-slate-50 mb-4">
-                {formatPrice(product.price)}
+              <div className="mb-4">
+                {product.discount > 0 ? (
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-4xl font-bold text-red-600">
+                      {formatPrice(calculateDiscountedPrice(product.price, product.discount))}
+                    </span>
+                    <span className="text-xl text-slate-500 line-through">
+                      {formatPrice(product.price)}
+                    </span>
+                    <Badge variant="success" className="ml-2 bg-green-100 text-green-700">
+                      {product.discount}% OFF
+                    </Badge>
+                  </div>
+                ) : (
+                  <div className="text-4xl font-bold text-slate-900 dark:text-slate-50">
+                    {formatPrice(product.price)}
+                  </div>
+                )}
               </div>
               <div className="flex items-center gap-3">
                 {inStock ? (

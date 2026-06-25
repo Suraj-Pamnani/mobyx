@@ -4,12 +4,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
 import { User, Mail, Lock, AlertCircle } from "lucide-react";
-import { registerSchema } from "../../utils/validation";
-import { Button } from "../../components/common/Button";
-import { Input } from "../../components/common/Input";
-import { Card } from "../../components/common/Card";
-import { useAuth } from "../../hooks/useAuth";
-import { ROUTES } from "../../utils/constants";
+import { registerSchema } from "../utils/validation";
+import { Button } from "../components/common/Button";
+import { Input } from "../components/common/Input";
+import { Card } from "../components/common/Card";
+import { useAuth } from "../hooks/useAuth";
+import { ROUTES } from "../utils/constants";
 import toast from "react-hot-toast";
 
 export const RegisterPage = () => {

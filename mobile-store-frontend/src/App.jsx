@@ -17,6 +17,9 @@ import { OrderConfirmationPage } from "./pages/OrderConfirmation";
 import { LoginPage } from "./pages/Login";
 import { RegisterPage } from "./pages/Register";
 import { NotFoundPage } from "./pages/NotFound";
+import AdminOrders from "./pages/AdminOrders";
+import { AdminProducts } from "./pages/AdminProducts";
+import { AdminDashboard } from "./pages/AdminDashboard";
 
 import { ROUTES } from "./utils/constants";
 
@@ -71,6 +74,32 @@ function AppContent() {
             element={
               <ProtectedRoute>
                 <OrderConfirmationPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Admin Routes */}
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute requireAdmin={true}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/products"
+            element={
+              <ProtectedRoute requireAdmin={true}>
+                <AdminProducts />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/orders"
+            element={
+              <ProtectedRoute requireAdmin={true}>
+                <AdminOrders />
               </ProtectedRoute>
             }
           />

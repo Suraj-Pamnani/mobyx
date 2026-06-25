@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Button } from "../../components/common/Button";
-import { ROUTES } from "../../utils/constants";
+import { Button } from "../components/common/Button";
+import { ROUTES } from "../utils/constants";
 
 export const NotFoundPage = () => {
   const navigate = useNavigate();

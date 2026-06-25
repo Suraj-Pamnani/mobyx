@@ -6,7 +6,7 @@ import { Card } from "../../components/common/Card";
 import { Button } from "../../components/common/Button";
 import { Rating } from "../../components/common/Rating";
 import { Badge } from "../../components/common/Card";
-import { formatPrice } from "../../utils/format";
+import { formatPrice, calculateDiscountedPrice } from "../../utils/format";
 import { ROUTES } from "../../utils/constants";
 
 export const ProductCard = ({ product, onAddToCart, loading = false }) => {
@@ -79,9 +79,20 @@ export const ProductCard = ({ product, onAddToCart, loading = false }) => {
 
           {/* Price */}
           <div className="flex items-baseline gap-2 mb-4">
-            <span className="text-lg font-bold text-slate-900 dark:text-slate-50">
-              {formatPrice(product.price)}
-            </span>
+            {product.discount > 0 ? (
+              <>
+                <span className="text-lg font-bold text-red-600">
+                  {formatPrice(calculateDiscountedPrice(product.price, product.discount))}
+                </span>
+                <span className="text-sm text-slate-500 line-through">
+                  {formatPrice(product.price)}
+                </span>
+              </>
+            ) : (
+              <span className="text-lg font-bold text-slate-900 dark:text-slate-50">
+                {formatPrice(product.price)}
+              </span>
+            )}
           </div>
 
           {/* Add to Cart Button */}

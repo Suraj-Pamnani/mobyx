@@ -4,14 +4,14 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
 import { AlertCircle } from "lucide-react";
-import { Button } from "../../components/common/Button";
-import { Input } from "../../components/common/Input";
-import { Card } from "../../components/common/Card";
-import { checkoutSchema } from "../../utils/validation";
-import { useCart } from "../../hooks/useCart";
-import { orderService } from "../../services";
-import { formatPrice } from "../../utils/format";
-import { ROUTES } from "../../utils/constants";
+import { Button } from "../components/common/Button";
+import { Input } from "../components/common/Input";
+import { Card } from "../components/common/Card";
+import { checkoutSchema } from "../utils/validation";
+import { useCart } from "../hooks/useCart";
+import { orderService } from "../services";
+import { formatPrice, calculateDiscountedPrice } from "../utils/format";
+import { ROUTES } from "../utils/constants";
 import toast from "react-hot-toast";
 
 // Razorpay integration
@@ -44,7 +44,7 @@ export const CheckoutPage = () => {
 
   // Calculate totals
   const subtotal = items.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
+    (sum, item) => sum + calculateDiscountedPrice(item.product.price, item.product.discount) * item.quantity,
     0
   );
   const tax = subtotal * 0.18;
@@ -68,7 +68,7 @@ export const CheckoutPage = () => {
         address: `${formData.address}, ${formData.city}, ${formData.state} ${formData.pincode}`,
       });
 
-      const { orderId, razorpayOrder } = orderResponse;
+      const { orderId, razorpayOrder, keyId } = orderResponse;
 
       // Load Razorpay
       const isRazorpayLoaded = await loadRazorpay();
@@ -80,7 +80,7 @@ export const CheckoutPage = () => {
 
       // Open Razorpay payment modal
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        key: keyId,
         order_id: razorpayOrder.id,
         amount: razorpayOrder.amount,
         currency: razorpayOrder.currency,
@@ -255,19 +255,22 @@ export const CheckoutPage = () => {
 
               {/* Items */}
               <div className="space-y-4 mb-6 pb-6 border-b border-slate-200 dark:border-slate-700 max-h-96 overflow-y-auto">
-                {items.map((item) => (
-                  <div
-                    key={item.product._id}
-                    className="flex justify-between text-sm"
-                  >
-                    <span className="text-slate-600 dark:text-slate-400">
-                      {item.product.modelName} × {item.quantity}
-                    </span>
-                    <span className="font-medium text-slate-900 dark:text-slate-50">
-                      {formatPrice(item.product.price * item.quantity)}
-                    </span>
-                  </div>
-                ))}
+                {items.map((item) => {
+                  const itemPrice = calculateDiscountedPrice(item.product.price, item.product.discount);
+                  return (
+                    <div
+                      key={item.product._id}
+                      className="flex justify-between text-sm"
+                    >
+                      <span className="text-slate-600 dark:text-slate-400">
+                        {item.product.modelName} × {item.quantity}
+                      </span>
+                      <span className="font-medium text-slate-900 dark:text-slate-50">
+                        {formatPrice(itemPrice * item.quantity)}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
 
               {/* Totals */}

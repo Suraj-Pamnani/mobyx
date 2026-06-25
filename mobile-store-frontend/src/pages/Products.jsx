@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ChevronDown, X } from "lucide-react";
-import { Button } from "../../components/common/Button";
-import { Input } from "../../components/common/Input";
-import { Card } from "../../components/common/Card";
-import { ProductGrid } from "../../components/product/ProductCard";
-import { ProductSkeleton } from "../../components/common/Skeleton";
-import { EmptyState } from "../../components/common/EmptyState";
-import { productService } from "../../services";
-import { cartService } from "../../services";
-import { useCart } from "../../hooks/useCart";
-import { POPULAR_BRANDS, PRICE_RANGES } from "../../utils/constants";
+import { Button } from "../components/common/Button";
+import { Input } from "../components/common/Input";
+import { Card } from "../components/common/Card";
+import { ProductGrid } from "../components/product/ProductCard";
+import { ProductSkeleton } from "../components/common/Skeleton";
+import { EmptyState } from "../components/common/EmptyState";
+import { productService } from "../services";
+import { cartService } from "../services";
+import { useCart } from "../hooks/useCart";
+import { POPULAR_BRANDS, PRICE_RANGES } from "../utils/constants";
 import toast from "react-hot-toast";
 
 export const ProductsPage = () => {

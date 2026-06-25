@@ -1,4 +1,4 @@
-﻿import apiClient from "./api";
+import apiClient from "./api";
 
 // ============ AUTH SERVICE ============
 export const authService = {
@@ -38,6 +38,12 @@ export const productService = {
     rating: data.rating,
     comment: data.comment,
   }),
+
+  // Update product (admin only)
+  updateProduct: (id, data) => apiClient.put(`/products/${id}`, data),
+
+  // Delete product (admin only)
+  deleteProduct: (id) => apiClient.delete(`/products/${id}`),
 };
 
 // ============ CART SERVICE ============

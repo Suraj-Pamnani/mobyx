@@ -1,8 +1,14 @@
-﻿export const formatPrice = (price) => {
+export const formatPrice = (price) => {
   return new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency: "INR",
+    maximumFractionDigits: 0
   }).format(price);
+};
+
+export const calculateDiscountedPrice = (price, discount) => {
+  if (!discount || discount <= 0) return price;
+  return price - (price * (discount / 100));
 };
 
 export const formatDate = (date) => {

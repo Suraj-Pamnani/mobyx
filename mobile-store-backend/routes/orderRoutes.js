@@ -49,9 +49,9 @@ router.post(
     protect,
     verifyPayment
 );
-// router.get(
-//     "/myorders",
-//     protect,
-//     getMyOrders
-// );
+router.get(
+    "/myorders",
+    protect,
+    getMyOrders
+);
 module.exports=router;

@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, Smartphone, Zap, Shield, Truck } from "lucide-react";
-import { Button } from "../../components/common/Button";
-import { ProductGrid } from "../../components/product/ProductCard";
-import { ProductSkeleton } from "../../components/common/Skeleton";
-import { productService } from "../../services";
-import { ROUTES } from "../../utils/constants";
+import { Button } from "../components/common/Button";
+import { ProductGrid } from "../components/product/ProductCard";
+import { ProductSkeleton } from "../components/common/Skeleton";
+import { productService } from "../services";
+import { ROUTES } from "../utils/constants";
 import toast from "react-hot-toast";
 
 const features = [

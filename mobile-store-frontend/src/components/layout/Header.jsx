@@ -28,6 +28,12 @@ export const Header = () => {
     { label: "Products", href: ROUTES.PRODUCTS, icon: Package },
   ];
 
+  if (user?.role === "admin") {
+    navLinks.push({ label: "Dashboard", href: "/admin/dashboard", icon: Home });
+    navLinks.push({ label: "Products", href: "/admin/products", icon: Package });
+    navLinks.push({ label: "Orders", href: "/admin/orders", icon: ShoppingCart });
+  }
+
   return (
     <header className="sticky top-0 z-40 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shadow-sm">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

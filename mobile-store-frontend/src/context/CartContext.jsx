@@ -1,4 +1,4 @@
-﻿import { createContext, useState, useCallback, useEffect } from "react";
+import { createContext, useState, useCallback, useEffect } from "react";
 import { cartService } from "../services";
 import toast from "react-hot-toast";
 
@@ -12,7 +12,7 @@ export const CartProvider = ({ children }) => {
     try {
       setLoading(true);
       const response = await cartService.getCart();
-      setCart(response.data);
+      setCart(response.cart);
     } catch (error) {
       console.error("Failed to fetch cart:", error);
     } finally {
@@ -23,9 +23,9 @@ export const CartProvider = ({ children }) => {
   const addToCart = useCallback(async (productId, quantity = 1) => {
     try {
       const response = await cartService.addToCart({ productId, quantity });
-      setCart(response.data);
+      setCart(response.cart);
       toast.success("Added to cart!");
-      return response.data;
+      return response;
     } catch (error) {
       toast.error(error.message || "Failed to add to cart");
       throw error;
@@ -35,8 +35,8 @@ export const CartProvider = ({ children }) => {
   const updateCartItem = useCallback(async (itemId, quantity) => {
     try {
       const response = await cartService.updateCart(itemId, { quantity });
-      setCart(response.data);
-      return response.data;
+      setCart(response.cart);
+      return response;
     } catch (error) {
       toast.error("Failed to update cart");
       throw error;
@@ -46,9 +46,9 @@ export const CartProvider = ({ children }) => {
   const removeFromCart = useCallback(async (itemId) => {
     try {
       const response = await cartService.removeFromCart(itemId);
-      setCart(response.data);
+      setCart(response.cart);
       toast.success("Removed from cart!");
-      return response.data;
+      return response;
     } catch (error) {
       toast.error("Failed to remove from cart");
       throw error;

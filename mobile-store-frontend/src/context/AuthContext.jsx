@@ -1,4 +1,4 @@
-﻿import { createContext, useState, useEffect, useCallback } from "react";
+import { createContext, useState, useEffect, useCallback } from "react";
 import { authService } from "../services";
 import toast from "react-hot-toast";
 
@@ -22,12 +22,12 @@ export const AuthProvider = ({ children }) => {
   const login = useCallback(async (email, password) => {
     try {
       const response = await authService.login({ email, password });
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("user", JSON.stringify(response.data.user));
-      setUser(response.data.user);
+      localStorage.setItem("token", response.token);
+      localStorage.setItem("user", JSON.stringify(response.user));
+      setUser(response.user);
       setIsAuthenticated(true);
       toast.success("Logged in successfully!");
-      return response.data;
+      return response;
     } catch (error) {
       toast.error(error.message || "Login failed");
       throw error;
@@ -37,12 +37,12 @@ export const AuthProvider = ({ children }) => {
   const register = useCallback(async (name, email, password) => {
     try {
       const response = await authService.register({ name, email, password });
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("user", JSON.stringify(response.data.user));
-      setUser(response.data.user);
+      localStorage.setItem("token", response.token);
+      localStorage.setItem("user", JSON.stringify(response.user));
+      setUser(response.user);
       setIsAuthenticated(true);
       toast.success("Account created successfully!");
-      return response.data;
+      return response;
     } catch (error) {
       toast.error(error.message || "Registration failed");
       throw error;
