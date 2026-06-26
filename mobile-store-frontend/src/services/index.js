@@ -50,7 +50,7 @@ export const productService = {
 export const cartService = {
   // Add product to cart
   addToCart: (data) => apiClient.post("/cart/add", {
-    product: data.productId,
+    productId: data.productId,
     quantity: data.quantity || 1,
   }),
 
@@ -58,14 +58,14 @@ export const cartService = {
   getCart: () => apiClient.get("/cart"),
 
   // Update item quantity in cart
-  updateCart: (data) => apiClient.put("/cart/update", {
-    product: data.productId,
+  updateCart: (productId, data) => apiClient.put("/cart/update", {
+    productId: productId,
     quantity: data.quantity,
   }),
 
   // Remove item from cart
   removeFromCart: (productId) => apiClient.delete("/cart/remove", {
-    data: { product: productId },
+    data: { productId: productId },
   }),
 
   // Get cart total
